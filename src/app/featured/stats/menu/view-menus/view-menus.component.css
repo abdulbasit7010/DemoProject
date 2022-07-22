@@ -1,0 +1,7 @@
+th.mat-sort-header-sorted {
+    color: black;
+  }
+  
+  ::ng-deep .mat-sort-header-arrow.ng-trigger.ng-trigger-arrowPosition {
+    opacity: 0.54 !important;
+  }

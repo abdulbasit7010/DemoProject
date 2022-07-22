@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "data": [
+    {
+      "use_case": "Self SMS",
+      "not_verified": 40,
+      "verified": 60
+    },
+	{
+      "use_case": "SFS",
+      "not_verified": 30,
+      "verified": 20
+    },
+	{
+      "use_case": "STS",
+      "not_verified": 20,
+      "verified": 90
+    },
+	{
+      "use_case": "CFS",
+      "not_verified": 10,
+      "verified": 50
+    }
+  ]
+}

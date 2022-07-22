@@ -1,0 +1,908 @@
+<app-loader></app-loader>
+
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{ display: this.shortCodeModal }"
+>
+  <div class="modal-dialog" role="document" style="max-width: 700px !important">
+    <div class="modal-content" style="height: 300px">
+      <div class="modal-header">
+        <h2 class="modal-title">Select Menu Flow</h2>
+
+        <mat-icon
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="closeShortCodeModal()"
+        >
+          cancel
+        </mat-icon>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="startForm" class="" @fadeSlideInOut>
+          <!-- <ng-template >Select Flow</ng-template> -->
+          <div class="">
+            <mat-form-field appearance="outline">
+              <mat-label>Short Code</mat-label>
+              <mat-select
+                [formControl]="serviceCode"
+                (selectionChange)="changeServiceCode($event.value)"
+                required
+                placeholder="Select"
+              >
+                <mat-option>Select</mat-option>
+                <mat-option *ngFor="let val of serviceCodes" [value]="val">
+                  {{ val.short_code }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="serviceCode.hasError('required')"
+                >Please choose Code</mat-error
+              >
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-radio-group
+              aria-label="Select an option"
+              [value]="radio_Button_Checker"
+              (change)="changeRadio($event.value)"
+            >
+              <mat-radio-button value="is_normal" [disabled]="fornormal"
+                >Normal Tree</mat-radio-button
+              >
+              <mat-radio-button
+                style="margin-left: 20px"
+                value="is_whitelist"
+                [disabled]="forwhite"
+                class="mr-2"
+                >Whitelist Tree
+              </mat-radio-button>
+            </mat-radio-group>
+
+            <mat-checkbox (change)="cloneTree($event)">Clone</mat-checkbox>
+          </div>
+
+          <div
+            class=""
+            *ngIf="cloneChecker && currentTreeSelectionMaintainer == 2"
+          >
+            <mat-form-field appearance="outline">
+              <mat-label>Select Tree Type</mat-label>
+              <mat-select
+                [formControl]="selectTreeType"
+                (selectionChange)="getWhiteTreeTypeServiceCode($event.value)"
+                required
+                placeholder="Select"
+              >
+                <mat-option>Select</mat-option>
+                <mat-option *ngFor="let val of treeType" [value]="val">
+                  {{ val }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="selectTreeType.hasError('required')"
+                >Please select Tree Type</mat-error
+              >
+            </mat-form-field>
+          </div>
+
+          <div class="" *ngIf="cloneChecker">
+            <mat-form-field appearance="outline">
+              <mat-label>Select Clone Service Code</mat-label>
+              <mat-select
+                [formControl]="filteredServiceCodeControl"
+                (selectionChange)="changeFilteredServiceCode($event.value)"
+                required
+                placeholder="Select"
+              >
+                <mat-option>Select</mat-option>
+                <mat-option
+                  *ngFor="let val of filteredServiceCode"
+                  [value]="val"
+                >
+                  {{ val.short_code }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="filteredServiceCodeControl.hasError('required')"
+                >Please choose Clone Service Code</mat-error
+              >
+            </mat-form-field>
+          </div>
+
+          <div class="" *ngIf="whiteListGroupChecker">
+            <mat-form-field appearance="outline">
+              <mat-label>Select White list group</mat-label>
+              <mat-select
+                [formControl]="white_list_group_id"
+                (selectionChange)="changeWhiteListGroup($event.value)"
+                required
+                placeholder="Select"
+              >
+                <mat-option>Select</mat-option>
+                <mat-option *ngFor="let val of whiteListgroup" [value]="val.id">
+                  {{ val.group_name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="white_list_group_id.hasError('required')"
+                >Please choose white list group id</mat-error
+              >
+            </mat-form-field>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          [disabled]="!startForm.valid"
+          type="button"
+          class="submit-button"
+          mat-raised-button
+          (click)="openDialogFirst()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal added by wasim -->
+<div
+  class="modal"
+  id="exampleModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  [ngStyle]="{ display: this.showModal }"
+>
+  <div class="modal-dialog" role="document" style="max-width: 700px !important">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row" [ngStyle]="{ display: menu_form_div }">
+          <mat-card class="example-card">
+            <div class="d-flex justify-content-between">
+              <h2 class="mt-2 mb-2" *ngIf="!isUpdate">Add Parent Node</h2>
+              <h2 class="mt-2 mb-2" *ngIf="isUpdate">
+                Update parent node of
+                <span *ngIf="showCurrentParent.length <= 20">{{
+                  showCurrentParent
+                }}</span>
+                <span *ngIf="showCurrentParent.length > 20">{{
+                  showCurrentParent.substring(0, 20) + "..."
+                }}</span>
+              </h2>
+              <mat-icon
+                data-dismiss="modal"
+                aria-label="Close"
+                (click)="closeDialog(true)"
+              >
+                cancel
+              </mat-icon>
+            </div>
+
+            <hr />
+            <ng-template>Publish Tree</ng-template>
+            <form
+              [formGroup]="menuForm"
+              (ngSubmit)="saveMenuForm()"
+              id="menuForm"
+            >
+              <div class="d-flex justify-content-around">
+                <mat-checkbox
+                  *ngIf="!menuForm.value.menu_is_transferable"
+                  (click)="menuCheck(!menuForm.value.menu_has_menu)"
+                  formControlName="menu_has_menu"
+                  >Has Child
+                </mat-checkbox>
+
+                <mat-checkbox
+                  (click)="messageCheck(!menuForm.value.menu_sms_text)"
+                  formControlName="menu_sms_text"
+                >
+                  Optional Message</mat-checkbox
+                >
+
+                <mat-checkbox
+                  (click)="chargeCheck(!menuForm.value.menu_is_chargeable)"
+                  formControlName="menu_is_chargeable"
+                  >Chargeable</mat-checkbox
+                >
+
+                <mat-checkbox
+                  formControlName="menu_is_transferable"
+                  (click)="
+                    getNormalFlowCodes(!menuForm.value.menu_is_transferable)
+                  "
+                  >Transferable</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="menuForm.value.menu_is_transferable"
+                  formControlName="menu_is_root"
+                  (click)="routeCheck(!menuForm.value.menu_is_root)"
+                  >Root SC</mat-checkbox
+                >
+              </div>
+
+              <div class="d-flex justify-content-around">
+                <mat-checkbox
+                  formControlName="menu_take_user_input"
+                  (click)="userInputCheck(!menuForm.value.menu_take_user_input)"
+                  >User Input</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="menuForm.value.menu_take_user_input"
+                  formControlName="menu_is_consent"
+                  (click)="consentCheck(!menuForm.value.menu_is_consent)"
+                  >Consent</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="!menuForm.value.menu_has_menu"
+                  formControlName="menu_is_package_code"
+                  (click)="
+                    packageCodeCheck(!menuForm.value.menu_is_package_code)
+                  "
+                  >Push String</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="menuForm.value.menu_is_package_code == true"
+                  formControlName="menu_is_3p_num"
+                >
+                  Include user input in USSD string</mat-checkbox
+                >
+              </div>
+
+              <div *ngIf="menuForm.value.menu_is_package_code == true">
+                <div
+                  class="d-flex flex-column"
+                  *ngIf="menuForm.value.menu_is_package_code == true"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>USSD String</mat-label>
+                    <input matInput formControlName="menu_package_code_text" />
+
+                    <mat-error
+                      *ngIf="menu_package_code_text.hasError('required')"
+                      >Please enter package Code Text</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_is_chargeable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Chargeable Type</mat-label>
+                  <mat-select
+                    [formControl]="menu_charge_type"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option
+                      *ngFor="let name of chargeable_types"
+                      [value]="name.id"
+                    >
+                      {{ name.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="menu_charge_type.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_is_chargeable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Amount</mat-label>
+                  <input matInput type="number" formControlName="menu_amount" />
+
+                  <mat-error *ngIf="menu_amount.hasError('required')"
+                    >Please Enter amount</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_sms_text == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Optional Message</mat-label>
+                  <input matInput formControlName="menu_optional_sms" />
+
+                  <mat-error *ngIf="menu_optional_sms.hasError('required')"
+                    >Please enter optional message</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_take_user_input == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter User Input</mat-label>
+                  <input matInput formControlName="menu_user_input" />
+
+                  <mat-error *ngIf="menu_user_input.hasError('required')"
+                    >Please enter user Input</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_is_consent == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Consent Text</mat-label>
+                  <input matInput formControlName="menu_consent_text" />
+
+                  <mat-error *ngIf="menu_consent_text.hasError('required')"
+                    >Please enter consent text</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="
+                  menuForm.value.menu_has_menu == false &&
+                  menuForm.value.menu_is_transferable == false
+                "
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Protocol</mat-label>
+                  <mat-select
+                    (selectionChange)="updateField($event.value)"
+                    [formControl]="menu_esme_protocol"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let protocolName of protocolNames"
+                      [value]="protocolName.id"
+                    >
+                      {{ protocolName.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="menu_esme_protocol.hasError('required')"
+                    >Please choose a Protocol</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column" *ngIf="showEsmeDropDown == true">
+                <mat-form-field appearance="outline">
+                  <mat-label>Esme Configuration</mat-label>
+                  <mat-select
+                    [formControl]="menu_action_id"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let name of esmeConfig"
+                      [value]="name.esme_id || name.id"
+                    >
+                      {{ name.esme_name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="menu_action_id.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="menuForm.value.menu_is_transferable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Service Code Flow</mat-label>
+                  <mat-select
+                    required
+                    placeholder="Select"
+                    formControlName="menu_service_code_flow"
+                    (selectionChange)="serviceCodeFlowCodes($event)"
+                  >
+                    <mat-option
+                      *ngFor="let name of normalflowCodes"
+                      [value]="name.id"
+                    >
+                      {{ name.short_code }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="menu_service_code_flow.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="
+                  menuForm.value.menu_is_transferable == true &&
+                  menuForm.value.menu_is_root == false
+                "
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>DTMF</mat-label>
+                  <mat-select
+                    required
+                    placeholder="Select"
+                    formControlName="menu_transfer_ussdString"
+                    (selectionChange)="serviceCodeFlowCodes($event)"
+                  >
+                    <mat-option
+                      *ngFor="let name of normalFlowCodesDtmf"
+                      [value]="name.unModified"
+                    >
+                      {{ name.modified }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="menu_transfer_ussdString.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Title</mat-label>
+                  <input
+                    matInput
+                    formControlName="menu_title"
+                    (change)="
+                      isValidTitle(
+                        this.mainJson[0].press_options,
+                        $event,
+                        false
+                      )
+                    "
+                  />
+                  <mat-icon *ngIf="menu_title.valid" matSuffix>done</mat-icon>
+
+                  <mat-error *ngIf="menu_title.hasError('required')"
+                    >Please choose a title</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Press option</mat-label>
+                  <input
+                    type="number"
+                    matInput
+                    formControlName="menu_press_option"
+                    (change)="isValidPressOption($event)"
+                  />
+                  <mat-icon *ngIf="menu_press_option.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="menu_press_option.hasError('required')"
+                    >Please add an option</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="mt-4">
+                <button
+                  type="submit"
+                  mat-raised-button
+                  class="submit-button"
+                  [disabled]="!menuForm.valid"
+                >
+                  Push Menu
+                </button>
+              </div>
+            </form>
+          </mat-card>
+        </div>
+
+        <div
+          class="row"
+          [ngStyle]="{ display: sub_menu_div }"
+          id="addSubMenuSubForm"
+        >
+          <mat-card class="example-card">
+            <div class="d-flex justify-content-between">
+              <h2 class="mt-2 mb-2" *ngIf="!isUpdate">
+                Add Child Node of
+                <span *ngIf="showCurrentParent.length <= 20">{{
+                  showCurrentParent
+                }}</span>
+                <span *ngIf="showCurrentParent.length > 20">{{
+                  showCurrentParent.substring(0, 20) + "..."
+                }}</span>
+              </h2>
+              <h2 class="mt-2 mb-2" *ngIf="isUpdate">
+                Update Child Node of
+                <span *ngIf="showCurrentParent.length <= 20">{{
+                  showCurrentParent
+                }}</span>
+                <span *ngIf="showCurrentParent.length > 20">{{
+                  showCurrentParent.substring(0, 20) + "..."
+                }}</span>
+              </h2>
+              <mat-icon
+                data-dismiss="modal"
+                aria-label="Close"
+                (click)="closeDialog(true)"
+              >
+                cancel
+              </mat-icon>
+            </div>
+            <hr />
+            <form
+              [formGroup]="subMenuForm"
+              (ngSubmit)="saveSubMenuForm()"
+              id="subMenuForm"
+            >
+              <div class="d-flex justify-content-around">
+                <mat-checkbox
+                  *ngIf="!subMenuForm.value.sub_is_transferable"
+                  (click)="menuCheck(!subMenuForm.value.sub_has_menu)"
+                  formControlName="sub_has_menu"
+                  >Has Child
+                </mat-checkbox>
+
+                <mat-checkbox
+                  (click)="messageCheck(!subMenuForm.value.sub_sms_text)"
+                  formControlName="sub_sms_text"
+                >
+                  Optional Message</mat-checkbox
+                >
+
+                <mat-checkbox
+                  (click)="chargeCheck(!subMenuForm.value.sub_is_chargeable)"
+                  formControlName="sub_is_chargeable"
+                  >Chargeable</mat-checkbox
+                >
+
+                <mat-checkbox
+                  (click)="
+                    getSubNormalFlowCode(!subMenuForm.value.sub_is_transferable)
+                  "
+                  formControlName="sub_is_transferable"
+                  >Transferable</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="subMenuForm.value.sub_is_transferable"
+                  formControlName="sub_is_root"
+                  (click)="routeCheck(!subMenuForm.value.sub_is_root)"
+                  >Root SC</mat-checkbox
+                >
+              </div>
+
+              <div class="d-flex justify-content-around">
+                <mat-checkbox
+                  formControlName="sub_take_user_input"
+                  (click)="
+                    userInputCheck(!subMenuForm.value.sub_take_user_input)
+                  "
+                  >User Input</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="subMenuForm.value.sub_take_user_input"
+                  formControlName="sub_is_consent"
+                  (click)="consentCheck(!subMenuForm.value.sub_is_consent)"
+                  >Consent</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="subMenuForm.value.sub_has_menu == false"
+                  formControlName="sub_is_package_code"
+                  (click)="
+                    packageCodeCheck(!subMenuForm.value.sub_is_package_code)
+                  "
+                  >Push String</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="subMenuForm.value.sub_is_package_code == true"
+                  formControlName="sub_is_3p_num"
+                  >Include user input in USSD string</mat-checkbox
+                >
+              </div>
+
+              <div *ngIf="subMenuForm.value.sub_is_package_code == true">
+                <div
+                  class="d-flex flex-column"
+                  *ngIf="subMenuForm.value.sub_is_package_code == true"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>USSD String</mat-label>
+                    <input matInput formControlName="sub_package_code_text" />
+
+                    <mat-error
+                      *ngIf="sub_package_code_text.hasError('required')"
+                      >Please enter package Code Text</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_is_chargeable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Chargeable Type</mat-label>
+                  <mat-select
+                    [formControl]="sub_charge_type"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option
+                      *ngFor="let name of chargeable_types"
+                      [value]="name.id"
+                    >
+                      {{ name.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sub_charge_type.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_is_chargeable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Amount</mat-label>
+                  <input matInput type="number" formControlName="sub_amount" />
+
+                  <mat-error *ngIf="sub_amount.hasError('required')"
+                    >Please Enter amount</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_sms_text == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Optional Message</mat-label>
+                  <input matInput formControlName="sub_optional_sms" />
+
+                  <mat-error *ngIf="sub_optional_sms.hasError('required')"
+                    >Please choose a title</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_take_user_input == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter User Input</mat-label>
+                  <input matInput formControlName="sub_user_input" />
+
+                  <mat-error *ngIf="sub_user_input.hasError('required')"
+                    >Please enter user Input</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_is_consent == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter Consent Text</mat-label>
+                  <input matInput formControlName="sub_consent_text" />
+
+                  <mat-error *ngIf="sub_consent_text.hasError('required')"
+                    >Please enter consent text</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="
+                  subMenuForm.value.sub_has_menu == false &&
+                  subMenuForm.value.sub_is_transferable == false
+                "
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Protocol</mat-label>
+                  <mat-select
+                    (selectionChange)="updateField($event.value)"
+                    [formControl]="sub_esme_protocol"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let protocolName of protocolNames"
+                      [value]="protocolName.id"
+                    >
+                      {{ protocolName.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sub_esme_protocol.hasError('required')"
+                    >Please choose a Protocol</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column" *ngIf="showEsmeDropDown == true">
+                <mat-form-field appearance="outline">
+                  <mat-label>Esme Configuration</mat-label>
+                  <mat-select
+                    [formControl]="sub_action_id"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let name of esmeConfig"
+                      [value]="name.esme_id || name.id"
+                    >
+                      {{ name.esme_name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sub_action_id.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="subMenuForm.value.sub_is_transferable == true"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Service Code Flow</mat-label>
+                  <mat-select
+                    required
+                    placeholder="Select"
+                    formControlName="sub_service_code_flow"
+                    (selectionChange)="subServiceCodeFlowCodes($event)"
+                  >
+                    <mat-option
+                      *ngFor="let name of normalflowCodes"
+                      [value]="name.id"
+                    >
+                      {{ name.short_code }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sub_service_code_flow.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="d-flex flex-column"
+                *ngIf="
+                  subMenuForm.value.sub_is_transferable == true &&
+                  subMenuForm.value.sub_is_root == false
+                "
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>DTMF</mat-label>
+                  <mat-select
+                    required
+                    placeholder="Select"
+                    formControlName="sub_transfer_ussdString"
+                  >
+                    <mat-option
+                      *ngFor="let name of normalFlowCodesDtmf"
+                      [value]="name.unModified"
+                    >
+                      {{ name.modified }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="sub_transfer_ussdString.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Title</mat-label>
+                  <input
+                    matInput
+                    formControlName="sub_title"
+                    (change)="
+                      isValidTitle(this.mainJson[0].press_options, $event, true)
+                    "
+                  />
+                  <mat-icon *ngIf="" matSuffix>done</mat-icon>
+
+                  <mat-error *ngIf="sub_title.hasError('required')"
+                    >Please choose a title</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="d-flex flex-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Press option</mat-label>
+                  <input
+                    type="number"
+                    matInput
+                    formControlName="sub_press_option"
+                    (change)="isValidPressOption($event)"
+                    id="sub_press_option"
+                  />
+                  <mat-icon *ngIf="" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="sub_press_option.hasError('required')"
+                    >Please add an option</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <br />
+              <button
+                type="submit"
+                mat-raised-button
+                class="mt-2 submit-button"
+                [disabled]="!subMenuForm.valid"
+              >
+                Push Menu
+              </button>
+            </form>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal"
+  id="exampleModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  [ngStyle]="{ display: this.showDltModal }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="height: 200px; margin-top: 50%">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLabel">Delete Selected Node</h2>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true" (click)="closedltMenuDialog()">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">Are you sure you want to delete this node?</div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          mat-raised-button
+          class="submit-button"
+          (click)="deleteMenu()"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ended -->

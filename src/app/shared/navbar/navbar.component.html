@@ -1,0 +1,46 @@
+<div
+  style="background: #ffffff 0% 0% no-repeat padding-box; opacity: 1"
+  class="toolbarFlex navBar mat-elevation-z2 box-alignment-settings"
+>
+  <div></div>
+  <div
+    class="d-flex justify-content-center align-items-center"
+    style="margin-right: 20px"
+  >
+    <div class="mr-1 d-flex flex-row">
+      <span class="mr-2 font-settings-navbar" style="align-self: center"
+        >Units {{ units | number: "2." }}</span
+      >
+      <span class="mr-2 font-settings-line" style="align-self: center">
+        |
+      </span>
+      <div class="mr-2" style="display: flex; flex-direction: column">
+        <span style="align-self: end">{{ userName || "?" }}</span>
+      </div>
+    </div>
+    <div class="circle">
+      <button
+        [matMenuTriggerFor]="menu"
+        mat-button
+        style="background: transparent; border: none; margin-top: 8px"
+        class="initials"
+      >
+        {{ nameInitials }}
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="profileSettings()">
+          <mat-icon>account_box</mat-icon>Profile Settings
+        </button>
+        <mat-divider></mat-divider>
+        <button
+          mat-menu-item
+          (click)="logout()"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <mat-icon>exit_to_app</mat-icon>Logout
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</div>

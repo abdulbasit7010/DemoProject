@@ -1,0 +1,121 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+  <div class="col-9 page-wrapper">
+    <div class="row justify-content-between">
+      <div class="heading set-heading-place">Services</div>
+      <div class="flexTwo">
+        <mat-form-field class="search-bar" appearance="outline">
+          <input matInput (keyup)="applyFilter($event)" #input />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="mat-elevation-z8 col-sm-10">
+        <div class="table-header" style="background: #ffff">
+          <mat-icon class="material-icons-outlined mat-icon-specs"
+            >visibility</mat-icon
+          >
+          <span class="sub-heading set-sub-heading-place">
+            Sub-Service Codes
+          </span>
+        </div>
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSortDirection="asc"
+          matSort
+          @fadeInGrow
+        >
+          <ng-container matColumnDef="short_code">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <b>Sub-Service Code</b>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.short_code }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="code_title">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <b>Title</b>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.code_title }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="code_description">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <b>Description</b>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.code_description }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="created_by">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <b> Created By</b>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.created_by }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="created_dt">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <b>Created At</b>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.created_dt }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef><b></b></th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                aria-label="Example icon-button with a menu"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button
+                  class="info"
+                  mat-menu-item
+                  (click)="editSubServiceCode(element)"
+                >
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button
+                  class="danger"
+                  mat-menu-item
+                  (click)="openDialog(element)"
+                >
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 20, 50, 100]">
+        </mat-paginator>
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <br /><br />
+  </div>
+</div>

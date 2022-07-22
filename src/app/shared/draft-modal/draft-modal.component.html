@@ -1,0 +1,95 @@
+<div *ngIf="data.name == 'deleteEsme' || data.name == 'deleteService'">
+  <div mat-dialog-content class="d-flex flex-column text-center">
+    <h2 style="margin-top: 15px">
+      {{ data.heading }}
+    </h2>
+  </div>
+  <div mat-dialog-actions style="float: right">
+    <button
+      *ngIf="data.name == 'deleteEsme'"
+      mat-raised-button
+      mat-dialog-close
+      class="submit-button"
+      (click)="deleteServiceConfig()"
+    >
+      Confirm
+    </button>
+
+    <button
+      *ngIf="data.name == 'deleteService'"
+      mat-raised-button
+      mat-dialog-close
+      class="submit-button"
+      (click)="deleteServiceCode()"
+    >
+      Confirm
+    </button>
+
+    <button mat-raised-button mat-dialog-close class="cancel-button">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isOpenDltNode">
+  <div mat-dialog-content class="d-flex flex-column text-center">
+    <h2 style="margin-top: 15px">
+      {{ data.heading }}
+    </h2>
+  </div>
+  <div mat-dialog-actions style="float: right">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      class="submit-button"
+      (click)="deleteCurrentNode()"
+    >
+      Confirm
+    </button>
+    <button mat-raised-button mat-dialog-close class="cancel-button">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<div *ngIf="data.name == 'deleteMenu'">
+  <div mat-dialog-content class="d-flex flex-column text-center">
+    <h2 style="margin-top: 15px">
+      {{ data.heading }}
+    </h2>
+  </div>
+  <div mat-dialog-actions style="float: right">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      class="submit-button"
+      (click)="deleteMenu()"
+    >
+      Confirm
+    </button>
+    <button mat-raised-button mat-dialog-close class="cancel-button">
+      Cancel
+    </button>
+  </div>
+</div>
+
+<div *ngIf="data.name == 'editService'">
+  <div mat-dialog-content class="d-flex flex-column text-center">
+    <h2 style="margin-top: 15px">
+      {{ data.heading }}
+    </h2>
+  </div>
+  <div mat-dialog-actions style="float: right">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      class="submit-button"
+      (click)="editService()"
+    >
+      Confirm
+    </button>
+    <button mat-raised-button mat-dialog-close class="cancel-button">
+      Cancel
+    </button>
+  </div>
+</div>

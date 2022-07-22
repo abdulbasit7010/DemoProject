@@ -1,0 +1,22 @@
+/* .form-design {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.form-column {
+  display: flex;
+  width: 45%;
+}
+.example-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+} */
+
+.increment {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+}

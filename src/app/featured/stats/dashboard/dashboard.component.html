@@ -1,0 +1,201 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+  <div class="col-9 padding-adjustment">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="heading">Dashboard</div>
+      <br />
+
+      <div class="row d-flex justify-content-around flex-row">
+        <div class="col-sm-6 justify-content-around flex-column">
+          <div class="row d-flex justify-content-around">
+            <div class="col-sm-6">
+              <mat-card
+                class="graphless-card"
+                style="transform: translate3d(0px, 0px, 10px)"
+              >
+                <div
+                  class="inner-card-individual-details d-flex flex-column justify-content-around"
+                >
+                  <div
+                    class="d-flex justify-content-around two-single-valued-card-adj"
+                  >
+                    <span class="report-card-font">
+                      {{ totaltree || 0 }}
+                    </span>
+                  </div>
+
+                  <div
+                    class="d-flex justify-content-around two-single-valued-card-adj"
+                  >
+                    <span class="text-font"><b>Total Tree Count</b></span>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+
+            <div class="col-sm-6">
+              <mat-card
+                class="graphless-card"
+                style="transform: translate3d(0px, 0px, 10px)"
+              >
+                <div
+                  class="inner-card-individual-details d-flex flex-column justify-content-around"
+                >
+                  <div
+                    class="d-flex justify-content-around two-single-valued-card-adj"
+                  >
+                    <span class="report-card-font">
+                      {{ total_Service_Count }}
+                    </span>
+                  </div>
+                  <div
+                    class="d-flex justify-content-around two-single-valued-card-adj"
+                  >
+                    <span class="text-font"><b> Total Services</b></span>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+
+          <div class="row d-flex justify-content-around">
+            <div class="col-sm-12">
+              <mat-card
+                class="graphless-card"
+                style="transform: translate3d(0px, 15px, 10px)"
+              >
+                <div
+                  class="inner-card-service-details d-flex flex-column justify-content-around"
+                >
+                  <div class="graphless-card-head">
+                    <b> Overall Service Details</b>
+                  </div>
+
+                  <div class="d-flex justify-content-between">
+                    <span class="report-card-font">{{ services_Count }} </span>
+                    <span
+                      class="report-card-font"
+                      style="transform: translate3d(-10px, 0px, 10px)"
+                    >
+                      {{ chargeable_Count }}
+                    </span>
+                    <span
+                      class="report-card-font"
+                      style="transform: translate3d(-10px, 0px, 10px)"
+                    >
+                      {{ has_menu_Count }}
+                    </span>
+                  </div>
+
+                  <div class="d-flex justify-content-between">
+                    <span class="text-font"><b>Total</b></span>
+                    <span class="text-font"> <b>Chargeable</b></span>
+                    <span class="text-font"> <b>Menu</b></span>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="row d-flex flex-column">
+            <div class="col-lg-12">
+              <mat-card class="" style="height: 100%">
+                <figure class="highcharts-figure">
+                  <div class="row d-flex justify-content-center">
+                    <h2>Overall Services Details</h2>
+                  </div>
+                  <div id="main"></div>
+                </figure>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row d-flex justify-content-around flex-row">
+        <div class="col-sm-6 charts-align">
+          <mat-card style="height: 100%">
+            <figure class="highcharts-figure">
+              <div id="stackedChartTree"></div>
+            </figure>
+          </mat-card>
+        </div>
+        <div class="col-sm-6 charts-align">
+          <mat-card style="height: 100%">
+            <figure class="highcharts-figure">
+              <div class="row flex-row-reverse justify-content-around">
+                <mat-form-field
+                  class="col-sm-4"
+                  style="transform: translateX(-8%); width: auto"
+                  appearance="outline"
+                >
+                  <mat-date-range-input
+                    [formGroup]="dateFormData"
+                    [rangePicker]="picker"
+                  >
+                    <input
+                      matStartDate
+                      placeholder="From"
+                      formControlName="st_dt"
+                    />
+                    <input
+                      matEndDate
+                      formControlName="end_dt"
+                      placeholder="To"
+                      (dateChange)="onSubmit()"
+                    />
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matSuffix [for]="picker">
+                    <mat-icon matDatepickerToggleIcon>arrow_drop_down</mat-icon>
+                  </mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+
+                  <mat-error
+                    *ngIf="
+                      dateFormData.controls.st_dt.hasError(
+                        'matStartDateInvalid'
+                      )
+                    "
+                    >Invalid Start date</mat-error
+                  >
+                  <mat-error
+                    *ngIf="
+                      dateFormData.controls.end_dt.hasError('matEndDateInvalid')
+                    "
+                    >Invalid End date</mat-error
+                  >
+                </mat-form-field>
+                <div class="col-1"></div>
+                <h2
+                  class="col-sm-7 d-flex align-items-center justify-content-center line-chart-head"
+                >
+                  Services Comparison (Chargeable vs Menu)
+                </h2>
+              </div>
+
+              <div id="container"></div>
+            </figure>
+          </mat-card>
+        </div>
+      </div>
+      <br />
+      <br />
+      <br />
+    </div>
+  </div>
+</div>

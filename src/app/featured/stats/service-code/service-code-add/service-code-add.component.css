@@ -1,0 +1,49 @@
+.example-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.form-design {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+::ng-deep.mat-card-content {
+  margin-bottom: 0px !important;
+}
+
+.action-buttons {
+  text-align: right;
+}
+
+.form-column {
+  display: flex;
+  width: 45%;
+}
+
+::ng-deep.mat-divider {
+  margin-bottom: 16px !important;
+}
+
+.example-check-box {
+  transform: translateY(25%);
+}
+
+input[type="text"][disabled] {
+  color: #766868;
+}
+
+.ngx-slider {
+  display: inline-block;
+  position: relative;
+  height: 4px;
+  width: 45%;
+  margin: 35px 0 15px;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}

@@ -1,0 +1,113 @@
+<div class="mainSideNav" style="overflow: auto">
+  <div>
+    <p class="portal-heading">Service Portal</p>
+    <span class="tabs d-flex align-items-end" (click)="isSelected('dashboard')" routerLink="/dashboard"
+      routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon class="mr-4">dashboard</mat-icon>
+      Dashboard
+    </span>
+
+    <!-- <span
+      class="tabs d-flex align-items-end"
+      (click)="openClosePanel('showConfig')"
+    >
+      <mat-icon class="mr-4">people</mat-icon>
+      <span style="width: 100%">ESME Management</span>
+      <div class="d-flex justify-content-end">
+        <mat-icon *ngIf="!showConfig">arrow_drop_down</mat-icon>
+        <mat-icon *ngIf="showConfig">arrow_drop_up</mat-icon>
+      </div>
+    </span>
+    <p *ngIf="showConfig" style="padding-left: 49px">
+      <span
+        class="tabs d-flex align-items-end sub-span"
+        (click)="isSelected('addConfig')"
+        [routerLink]="['/service-config-add']"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+       
+        {{ addEditServiceConfig }}
+      </span>
+      <span
+        class="tabs d-flex align-items-end sub-span"
+        (click)="isSelected('viewConfig')"
+        [routerLink]="['/service-config-list']"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        
+        View ESME Configurations
+      </span>
+    </p> -->
+
+    <span *ngIf="isServiceEnabled" class="tabs d-flex align-items-end" (click)="openClosePanel('showService')">
+      <mat-icon class="mr-4">settings_suggest</mat-icon>
+      <span style="width: 100%">Services</span>
+      <div class="d-flex justify-content-end">
+        <mat-icon *ngIf="!showService">arrow_drop_down</mat-icon>
+        <mat-icon *ngIf="showService">arrow_drop_up</mat-icon>
+      </div>
+    </span>
+    <div *ngIf="showService" style="padding-left: 49px">
+      <span class="tabs d-flex align-items-end sub-span" (click)="isSelected('addService')"
+        [routerLink]="['/service-code-add']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <!-- <mat-icon class="mr-4">post_add</mat-icon> -->
+        {{ addEditServices }}
+      </span>
+      <span class="tabs d-flex align-items-end sub-span" (click)="isSelected('viewServices')"
+        [routerLink]="['/service-code-list-view']" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <!-- <mat-icon class="mr-4">list_view</mat-icon> -->
+        View Services
+      </span>
+
+      <span class="tabs d-flex align-items-end sub-span" [routerLink]="['/stringBasedCharging']"
+        routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <!-- <mat-icon class="mr-4">list_view</mat-icon> -->
+        String Based Charging
+      </span>
+      <span class="tabs d-flex align-items-end sub-span" [routerLink]="['/stringBasedChargingView']"
+        routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <!-- <mat-icon class="mr-4">list_view</mat-icon>  -->
+        String Based Charging View
+      </span>
+    </div>
+
+    <span *ngIf="isMenuEnabled" class="tabs d-flex align-items-end" (click)="openClosePanel('showMenu')">
+      <mat-icon class="mr-4">menu</mat-icon>
+      <span style="width: 100%">Menu</span>
+      <div class="d-flex justify-content-end">
+        <mat-icon *ngIf="!showMenu">arrow_drop_down</mat-icon>
+        <mat-icon *ngIf="showMenu">arrow_drop_up</mat-icon>
+      </div>
+    </span>
+    <div *ngIf="showMenu">
+      <div style="padding-left: 49px">
+        <span class="tabs d-flex align-items-end sub-span" (click)="isSelected('addMenu')" [routerLink]="['/menu-add']"
+          routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <!-- <mat-icon class="mr-4">add_circle</mat-icon>  -->
+          Create Menu
+        </span>
+        <span class="tabs d-flex align-items-end sub-span" (click)="isSelected('viewMenu')"
+          [routerLink]="['/view-menus-list']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <!-- <mat-icon class="mr-4">list_view</mat-icon>  -->
+          View Menus
+        </span>
+      </div>
+    </div>
+
+    <span class="tabs d-flex align-items-end" (click)="isSelected('dashboard')" routerLink="/" routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon class="mr-4">logout</mat-icon>
+      Logout
+    </span>
+  </div>
+  <!-- <div class="text-center mb-3">
+    <img
+      style="width: 100px"
+      src="../../../assets/images/M.M.-Logo-White.png"
+      alt="M.M. Logo"
+    />
+  </div> -->
+</div>

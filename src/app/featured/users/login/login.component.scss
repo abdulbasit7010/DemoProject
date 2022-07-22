@@ -1,0 +1,46 @@
+.login-screen-container {
+  height: 100vh;
+  background-color: #272f52;
+  font-family: "Poppins";
+}
+
+.login-mat-card {
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 370px;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 4px 12px #00000066;
+  border-radius: 12px;
+  opacity: 1;
+}
+
+.login-mat-card-title {
+  text-align: center;
+  letter-spacing: 0px;
+  color: #000000;
+  opacity: 1;
+  margin-bottom: 38px;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 10px;
+  height: 56px;
+  background: #59caea 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 3px #00000029;
+  border-radius: 12px;
+  opacity: 1;
+  font: normal normal medium 20px/31px Poppins;
+  letter-spacing: 0px;
+  color: #ffffff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.login-screen-container {
+  animation: fadeIn 0.5s;
+}

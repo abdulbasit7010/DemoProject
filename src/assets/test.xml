@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+  <soapenv:Body>
+    <ns:retrieveTenantsResponse xmlns:ns="http://services.mgt.tenant.carbon.wso2.org" xmlns:ax2914="http://beans.common.stratos.carbon.wso2.org/xsd" xmlns:ax2916="http://exception.common.stratos.carbon.wso2.org/xsd" xmlns:ax2920="http://beans.mgt.tenant.carbon.wso2.org/xsd" xmlns:ax2918="http://api.user.carbon.wso2.org/xsd">
+      <ns:return xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ax2914:TenantInfoBean">
+        <ax2914:active>true</ax2914:active>
+        <ax2914:admin xsi:nil="true"/>
+        <ax2914:adminPassword xsi:nil="true"/>
+        <ax2914:createdDate>2019-08-30T06:38:19.000+00:00</ax2914:createdDate>
+        <ax2914:email>awais.ahmed@mercurialminds.com</ax2914:email>
+        <ax2914:firstname xsi:nil="true"/>
+        <ax2914:lastname xsi:nil="true"/>
+        <ax2914:originatedService xsi:nil="true"/>
+        <ax2914:successKey xsi:nil="true"/>
+        <ax2914:tenantDomain>mercurialminds.com</ax2914:tenantDomain>
+        <ax2914:tenantId>1</ax2914:tenantId>
+        <ax2914:usagePlan xsi:nil="true"/>
+      </ns:return>
+      <ns:return xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ax2914:TenantInfoBean">
+        <ax2914:active>true</ax2914:active>
+        <ax2914:admin xsi:nil="true"/>
+        <ax2914:adminPassword xsi:nil="true"/>
+        <ax2914:createdDate>2019-10-09T23:27:19.000+00:00</ax2914:createdDate>
+        <ax2914:email>info@verifapp.com</ax2914:email>
+        <ax2914:firstname xsi:nil="true"/>
+        <ax2914:lastname xsi:nil="true"/>
+        <ax2914:originatedService xsi:nil="true"/>
+        <ax2914:successKey xsi:nil="true"/>
+        <ax2914:tenantDomain>verifapp.com</ax2914:tenantDomain>
+        <ax2914:tenantId>2</ax2914:tenantId>
+        <ax2914:usagePlan xsi:nil="true"/>
+      </ns:return>
+    </ns:retrieveTenantsResponse>
+  </soapenv:Body>
+</soapenv:Envelope>

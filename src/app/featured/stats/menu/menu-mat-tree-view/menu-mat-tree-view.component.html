@@ -1,0 +1,188 @@
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+
+  <div class="col-9 padding-adjustment">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+    <div class="page-wrapper">
+      <div class="row mb-2 flexDesign">
+        <div class="heading">Add Menu</div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+          <mat-card>
+            <div class="d-flex" style="padding: 3%; margin-left: 16px">
+              <div class="col-sm-6">
+                <mat-icon class="material-icons-outlined mat-icon-specs"
+                  >visibility</mat-icon
+                >
+
+                <span class="sub-heading set-sub-heading-place">
+                  Create Tree
+                </span>
+              </div>
+
+              <div class="col-sm-6 d-flex justify-content-end">
+                <div>
+                  <button
+                    type="button"
+                    mat-raised-button
+                    class="ml-4 submit-button"
+                    (click)="child.openDialog()"
+                    [disabled]="mainJson.length == 0"
+                  >
+                    Add New Parent
+                  </button>
+                  <button
+                    type="button"
+                    mat-raised-button
+                    class="ml-4 submit-button"
+                    (click)="child.saveJson()"
+                  >
+                    Save Menu
+                  </button>
+                </div>
+              </div>
+            </div>
+            <mat-tree
+              [dataSource]="dataSource"
+              [treeControl]="treeControl"
+              #tree
+              class="example-tree"
+              *ngIf="mainJson.length > 0"
+            >
+              <!-- This is the tree node template for leaf nodes -->
+              <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+                <li class="mat-tree-node node-div-border">
+                  <button mat-icon-button disabled></button>
+                  <span
+                    class="add_child"
+                    (click)="child.addChild(node.menu_item_text)"
+                    text="Click to add menu here"
+                    *ngIf="node.menu_item_text.length < 20"
+                  >
+                    {{ node.menu_item_text }}
+                  </span>
+                  <span
+                    class="add_child"
+                    (click)="child.addChild(node.menu_item_text)"
+                    text="Click to add menu here"
+                    *ngIf="node.menu_item_text.length > 19"
+                    (click)="showNodeTextModal(node)"
+                  >
+                    {{ node.menu_item_text.substring(0, 20) + "..." }}
+                  </span>
+                </li>
+              </mat-tree-node>
+              <!-- This is the tree node template for expandable nodes -->
+              <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                <li>
+                  <div class="mat-tree-node node-div-border flex-space-between">
+                    <div>
+                      <button
+                        mat-icon-button
+                        matTreeNodeToggle
+                        [attr.aria-label]="'Toggle ' + node.menu_item_text"
+                      >
+                        <mat-icon class="mat-icon-rtl-mirror">
+                          {{
+                            treeControl.isExpanded(node)
+                              ? "expand_more"
+                              : "chevron_right"
+                          }}
+                        </mat-icon>
+                      </button>
+                      <span style="font-size: large"
+                        ><b>{{ node.menu_press_options }}: </b>
+                        <span *ngIf="node.menu_item_text.length <= 20">{{
+                          node.menu_item_text
+                        }}</span>
+                        <span
+                          *ngIf="node.menu_item_text.length > 20"
+                          (click)="showNodeTextModal(node)"
+                          >{{
+                            node.menu_item_text.substring(0, 20) + "..."
+                          }}</span
+                        >
+                      </span>
+                    </div>
+
+                    <div>
+                      <mat-icon
+                        *ngIf="node.has_menu"
+                        class="mt-1 add_child"
+                        style="color: #272f52"
+                        (click)="child.addChild(node)"
+                      >
+                        add_box</mat-icon
+                      >
+                      <mat-icon
+                        class="mt-1 add_child"
+                        style="color: #ff4f4f"
+                        (click)="child.opendltMenuDialog(node)"
+                      >
+                        delete
+                      </mat-icon>
+                      <mat-icon
+                        class="mt-1 add_child"
+                        style="color: #ffc200"
+                        (click)="child.updateMenu(node)"
+                        >edit
+                      </mat-icon>
+                    </div>
+                  </div>
+                  <ul
+                    [class.example-tree-invisible]="
+                      !treeControl.isExpanded(node)
+                    "
+                  >
+                    <ng-container matTreeNodeOutlet></ng-container>
+                  </ul>
+                </li>
+              </mat-nested-tree-node>
+            </mat-tree>
+          </mat-card>
+          <!-- <div class="col-sm-4">
+  </div> -->
+        </div>
+        <div class="col-sm-1"></div>
+      </div>
+    </div>
+    <app-menu-add #child (outputJson)="getChildValue($event)"></app-menu-add>
+  </div>
+</div>
+<div
+  class="modal"
+  id="nodeText"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true"
+  [ngStyle]="{ display: this.showTextModal }"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Node Text</h5>
+        <mat-icon
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="closeModal()"
+        >
+          cancel
+        </mat-icon>
+      </div>
+      <div class="modal-body">
+        <div class="row d-flex justify-content-around">
+          <p class="node-text">{{ nodeText }}</p>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>

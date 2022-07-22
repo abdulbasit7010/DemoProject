@@ -1,0 +1,36 @@
+.example-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.form-design {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+::ng-deep.mat-card-content {
+  margin-bottom: 0px !important;
+}
+
+.action-buttons {
+  text-align: right;
+}
+
+.form-column {
+  display: flex;
+  width: 45%;
+}
+
+::ng-deep.mat-divider {
+  margin-bottom: 16px !important;
+}
+
+.example-check-box {
+  transform: translateY(25%);
+}
+.form-design {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}

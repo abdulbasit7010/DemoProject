@@ -1,0 +1,115 @@
+.row-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+span {
+  outline: none;
+}
+
+@media screen and (max-width: 575px) {
+  .logoutBtn {
+    display: none;
+  }
+  .matDropMenu {
+    display: block !important;
+  }
+}
+
+.toolbarFlex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.marginRight {
+  margin-right: 40px;
+  display: flex;
+}
+
+.color {
+  color: aliceblue;
+}
+
+:root {
+  --avatar-size: 18rem;
+  /* change this value anything, e.g., 100px, 10rem, etc. */
+}
+
+.circle {
+  background-color: #ccc;
+  border-radius: 50%;
+  height: 32px;
+  width: 38px;
+  text-align: center;
+}
+
+.initials {
+  font-size: calc(var(--avatar-size) / 2); /* 50% of parent */
+  line-height: 1;
+  position: relative;
+  top: calc(var(--avatar-size) / 4); /* 25% of parent */
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  font-family: sans-serif;
+  justify-content: center;
+  margin: 0;
+}
+
+.mat-button,
+.mat-icon-button,
+.mat-stroked-button,
+.mat-flat-button {
+  padding: 0%;
+  min-width: 0px;
+}
+
+.font-settings-navbar {
+  font: normal normal medium 18px/22px SF Pro Display !important;
+  letter-spacing: 0px;
+  color: #000000 !important;
+  text-transform: capitalize;
+  opacity: 1;
+}
+
+.mat-elevation-z2 {
+  box-shadow: 0 -5px 0 -1px rgb(0 0 0 / 20%), 0 0px 0px rgb(0 0 0 / 14%),
+    0 1px 5px rgb(0 0 0 / 12%);
+}
+
+.box-alignment-settings {
+  padding-left: 16px;
+  padding-right: 16px;
+  height: 100%;
+}
+
+.font-settings-line {
+  color: #e4e6ec 0% 0% no-repeat padding-box !important;
+  opacity: 1;
+}
+
+.mat-toolbar,
+.mat-toolbar h1,
+.mat-toolbar h2,
+.mat-toolbar h3,
+.mat-toolbar h4,
+.mat-toolbar h5,
+.mat-toolbar h6 {
+  font: normal normal medium 18px/22px SF Pro Display;
+  letter-spacing: normal;
+  margin: 0;
+}

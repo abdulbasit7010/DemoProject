@@ -1,0 +1,477 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav
+      [addEditServiceConfigChecker]="addEditServiceConfigChecker"
+    ></app-side-main-nav>
+  </div>
+  <div class="col-9 page-wrapper">
+    <div class="row heading">ESME Management</div>
+    <div class="row d-flex justify-content-center align-items-center mt-5">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-10">
+        <form
+          [formGroup]="serviceConfigForm"
+          autocomplete="off"
+          @fadeSlideInOut
+        >
+          <mat-card class="example-card">
+            <mat-card-title>
+              <div class="table-header" style="background: #ffff">
+                <mat-icon class="material-icons-outlined mat-icon-specs"
+                  >visibility</mat-icon
+                >
+
+                <span class="sub-heading set-sub-heading-place">
+                  {{ heading }} ESME configuration
+                </span>
+              </div>
+            </mat-card-title>
+
+            <mat-card-content class="form-design mt-3 mb-3">
+              <div class="form-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Service Name</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    formControlName="serviceName"
+                  /><mat-icon *ngIf="serviceName.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="serviceName.hasError('required')">
+                    Service Name is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-column d-flex flex-row justify-content-around">
+                <mat-checkbox
+                  class="example-check-box"
+                  formControlName="is_sponsored_charging"
+                  (change)="update_sponsored()"
+                  >Sponsored</mat-checkbox
+                >
+
+                <mat-checkbox
+                  class="example-check-box"
+                  formControlName="is_sms_mo"
+                  (change)="update_sms()"
+                  >SMS</mat-checkbox
+                >
+
+                <mat-checkbox
+                  class="example-check-box"
+                  formControlName="is_dialog"
+                  >dialogue</mat-checkbox
+                >
+
+                <mat-checkbox
+                  *ngIf="serviceConfigForm.value.protocol == 'smpp'"
+                  class="example-check-box"
+                  formControlName="is_subnet"
+                  (change)="checkSubnet()"
+                  >Subnet</mat-checkbox
+                >
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.is_sponsored_charging"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>ESME Charging</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    (keydown)="_keydown($event)"
+                    formControlName="esme_charging_msisdn"
+                  /><mat-icon *ngIf="esme_charging_msisdn.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="esme_charging_msisdn.hasError('required')">
+                    esme_charging_msisdn is required
+                  </mat-error>
+                  <mat-error *ngIf="esme_charging_msisdn.hasError('pattern')">
+                    ESME Charging
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.is_sms_mo"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>ESME MO</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    (keydown)="_keydown($event)"
+                    formControlName="esme_mo_msisdn"
+                  /><mat-icon *ngIf="esme_mo_msisdn.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="esme_mo_msisdn.hasError('required')">
+                    esme_mo_msisdn is required
+                  </mat-error>
+                  <mat-error *ngIf="esme_mo_msisdn.hasError('pattern')">
+                    invalid ESME MO
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.is_sms_mo"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>ESME MO Keyword</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    formControlName="esme_mo_keyword"
+                  /><mat-icon *ngIf="esme_mo_keyword.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="esme_mo_keyword.hasError('required')">
+                    ESME MO Keyword is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Description</mat-label>
+                  <textarea
+                    rows="2"
+                    style="width: 100%"
+                    matInput
+                    formControlName="description"
+                  ></textarea
+                  ><mat-icon *ngIf="description.valid" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="description.hasError('required')">
+                    Description is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Protocol</mat-label>
+                  <mat-select
+                    (selectionChange)="updateField($event.value)"
+                    [formControl]="protocol"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let protocolName of protocolNames"
+                      [value]="protocolName"
+                    >
+                      {{ protocolName }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="protocol.hasError('required')"
+                    >Please choose a Protocol</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div class="form-column">
+                <mat-form-field appearance="outline">
+                  <mat-label>Generic Message</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    formControlName="generic_message"
+                  />
+                  <mat-icon *ngIf="generic_message.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="generic_message.hasError('required')">
+                    Generic Message is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol !== 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Request URL</mat-label>
+                  <input matInput type="text" formControlName="requestUrl" />
+                  <mat-icon *ngIf="requestUrl.valid" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="requestUrl.hasError('required')">
+                    Request URL is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- if request url is smpp -->
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.is_subnet"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Select Subnet</mat-label>
+                  <mat-select
+                    [formControl]="subnet"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                      *ngFor="let values of subnetValues"
+                      [value]="values"
+                    >
+                      {{ values }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="subnet.hasError('required')"
+                    >Please choose a Protocol</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol == 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>System Id</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    (keydown)="_keydown($event)"
+                    formControlName="systemId"
+                  /><mat-icon *ngIf="systemId.valid" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="systemId.hasError('required')">
+                    systemId is required
+                  </mat-error>
+                  <mat-error *ngIf="systemId.hasError('pattern')">
+                    only greater then 0 is allowed
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol == 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Password</mat-label>
+                  <input
+                    matInput
+                    type="password"
+                    formControlName="password"
+                  /><mat-icon *ngIf="password.valid" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="password.hasError('required')">
+                    password is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol == 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Ip address</mat-label>
+                  <input
+                    (blur)="addIPS()"
+                    matInput
+                    type="text"
+                    formControlName="destination_ip"
+                  /><mat-icon *ngIf="destination_ip.valid" matSuffix
+                    >done</mat-icon
+                  >
+                  <mat-error *ngIf="destination_ip.hasError('required')">
+                    Ip is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol == 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Port</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    (keydown)="_keydown($event)"
+                    formControlName="port"
+                  /><mat-icon *ngIf="port.valid" matSuffix>done</mat-icon>
+                  <mat-error *ngIf="port.hasError('required')">
+                    port Name is required
+                  </mat-error>
+                  <mat-error *ngIf="port.hasError('pattern')">
+                    invalid port
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- if protocol is http or https -->
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.protocol !== 'smpp'"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Choose a Request Type</mat-label>
+                  <mat-select
+                    [formControl]="requestTypeSelect"
+                    required
+                    placeholder="Select"
+                  >
+                    <mat-option *ngFor="let req of reqTypes" [value]="req">
+                      {{ req }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="requestTypeSelect.hasError('required')"
+                    >Please choose a type</mat-error
+                  >
+                </mat-form-field>
+              </div>
+
+              <div>
+                <div
+                  *ngIf="
+                    serviceConfigForm.value.requestTypeSelect == 'GET' ||
+                    serviceConfigForm.value.requestTypeSelect == 'POST'
+                  "
+                  class="form-column"
+                >
+                  <form
+                    style="height: 65px"
+                    class="d-flex align-items-baseline"
+                  >
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <!-- <mat-label>Add parameters</mat-label> -->
+                      <mat-label>Key</mat-label>
+                      <input
+                        matInput
+                        style="width: 40% !important"
+                        placeholder="Enter Key"
+                        [(ngModel)]="bodyKey"
+                      />
+                      <mat-icon *ngIf="bodyKey" matSuffix>done</mat-icon>
+                    </mat-form-field>
+                    <h2
+                      style="
+                        display: inline;
+                        padding-left: 5px;
+                        padding-right: 5px;
+                      "
+                    >
+                      :
+                      <br />
+                      <br />
+                    </h2>
+                    <!-- example-full-width -->
+                    <mat-form-field
+                      class="example-full-width"
+                      appearance="outline"
+                    >
+                      <mat-label>Value</mat-label>
+                      <input
+                        matInput
+                        placeholder="Enter Value"
+                        [(ngModel)]="bodyValue"
+                      /><mat-icon *ngIf="bodyValue" matSuffix>done</mat-icon>
+                    </mat-form-field>
+                    <button
+                      mat-raised-button
+                      class="submit-button"
+                      [disabled]="bodyKey == '' || bodyValue == ''"
+                      (click)="onAddBody()"
+                    >
+                      Add
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div
+                class="form-column"
+                *ngIf="serviceConfigForm.value.is_subnet"
+              >
+                <mat-chip-list
+                  class="example-chip"
+                  cdkDropList
+                  cdkDropListOrientation="horizontal"
+                  (cdkDropListDropped)="drop($event)"
+                >
+                  <mat-chip
+                    class="example-box"
+                    cdkDrag
+                    *ngFor="let IP of IPArray"
+                  >
+                    {{ IP }}
+                  </mat-chip>
+                </mat-chip-list>
+              </div>
+            </mat-card-content>
+
+            <mat-chip-list
+              class="example-chip mb-2"
+              cdkDropList
+              cdkDropListOrientation="horizontal"
+            >
+              <mat-chip
+                class="example-box"
+                cdkDrag
+                *ngFor="let eachBody of body.value | keyvalue"
+              >
+                {{ eachBody.key }} : {{ eachBody.value }}
+                <button matChipRemove (click)="removeBody(eachBody.key)">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+
+            <div class="action-buttons">
+              <mat-divider inset class="mb-4"></mat-divider>
+
+              <button
+                mat-raised-button
+                class="cancel-button"
+                (click)="clearForm()"
+              >
+                Clear
+              </button>
+              <button
+                [disabled]="!serviceConfigForm.valid"
+                mat-raised-button
+                *ngIf="historyData !== 'esmeConfig'"
+                class="submit-button"
+                (click)="onSubmit()"
+              >
+                Add Esme
+              </button>
+              <button
+                [disabled]="!serviceConfigForm.valid"
+                *ngIf="historyData == 'esmeConfig'"
+                mat-raised-button
+                class="submit-button"
+                (click)="updateEsmeConfiguration()"
+              >
+                Update Esme
+              </button>
+            </div>
+          </mat-card>
+        </form>
+      </div>
+
+      <div class="col-sm-1"></div>
+    </div>
+  </div>
+</div>

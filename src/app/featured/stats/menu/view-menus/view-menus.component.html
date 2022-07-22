@@ -1,0 +1,116 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+  <div class="col-9 padding-adjustment">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="row justify-content-between">
+        <div class="heading">Menu Management</div>
+        <div class="flexTwo">
+          <mat-form-field class="search-bar" appearance="outline">
+            <input matInput (keyup)="applyFilter($event)" #input />
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="mat-elevation-z8 col-sm-10">
+          <div class="table-header" style="background: #ffff">
+            <mat-icon class="material-icons-outlined mat-icon-specs"
+              >visibility</mat-icon
+            >
+            <span class="sub-heading set-sub-heading-place"> View Menus</span>
+          </div>
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            #sorter1="matSort"
+            matSortDirection="asc"
+            style="width: 100%"
+            @fadeInGrow
+          >
+            <!-- class="mat-elevation-z8" margin-top: 10px; -->
+            <ng-container matColumnDef="short_code">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                Service Code
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.short_code }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="code_title">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>Title</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.code_title }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  aria-label="Example icon-button with a menu"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button
+                    class="white-list"
+                    mat-menu-item
+                    (click)="viewMenu(element, 'true')"
+                    *ngIf="element.is_whitelist"
+                  >
+                    <mat-icon style="color: silver">account_tree</mat-icon>
+                    <span>White List Tree</span>
+                  </button>
+                  <button
+                    class="normal"
+                    mat-menu-item
+                    (click)="viewMenu(element, 'false')"
+                    *ngIf="element.is_normal"
+                  >
+                    <mat-icon>account_tree</mat-icon>
+                    <span>Normal Tree</span>
+                  </button>
+
+                  <button
+                    class="danger"
+                    mat-menu-item
+                    (click)="deleteMenu(element)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+
+          <mat-paginator
+            style="width: 100%"
+            #MatPaginator
+            [pageSize]="10"
+            [pageSizeOptions]="[5, 10, 20, 50, 100]"
+          >
+          </mat-paginator>
+        </div>
+
+        <div class="col-sm-1"></div>
+      </div>
+
+      <br /><br />
+    </div>
+  </div>
+</div>

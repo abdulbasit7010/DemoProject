@@ -1,0 +1,35 @@
+.addButton {
+  text-align: center;
+  margin-bottom: 0;
+  border-radius: 25px !important;
+  background: #272f52 !important;
+  margin-right: 20px;
+  width: 56%;
+  height: 44%;
+}
+
+.justify-content-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+hr {
+  /* margin-top: 0;  */
+  margin-top: -42px;
+  clear: both;
+}
+
+:host.paginate-icon::ng-deep.mat-icon-button {
+  border-radius: none;
+  background-color: #00a6ff;
+  height: 40px;
+  width: 40px;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+::ng-deep .mat-sort-header-arrow.ng-trigger.ng-trigger-arrowPosition {
+  opacity: 0.54 !important;
+}

@@ -1,0 +1,49 @@
+.example-container {
+  width: 400px;
+  height: 200px;
+  margin: 12px;
+  border: 1px solid #555;
+  background-color: #272f52;
+}
+/* .mainTabsDiv {
+} */
+.cursor {
+  cursor: pointer;
+}
+
+.tabs {
+  background: #272f52;
+  color: #fafafa;
+  padding: 14px;
+  word-break: break-word;
+}
+
+.tabs.active {
+  color: #59caea;
+  border-right: 5px solid;
+}
+
+.tabs:hover {
+  color: #59caea;
+  cursor: pointer;
+}
+
+.portal-heading {
+  font: normal normal 500 20px/22px Poppins;
+  letter-spacing: 0px;
+  color: #f9f9f9;
+  opacity: 1;
+  margin-bottom: 41px;
+  text-align: center;
+  margin-top: 37px;
+}
+.mainSideNav {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: space-between;
+}
+
+.sub-span{
+  margin-left: 15px;
+}

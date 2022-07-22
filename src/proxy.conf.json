@@ -1,0 +1,7 @@
+{
+    "/api/*": {
+        "target": "https://api.verifapp.com:8243",
+        "secure": false,
+        "logLevel": "debug"
+    }
+}

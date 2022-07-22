@@ -1,0 +1,616 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav
+      [addEditServicesChecker]="addEditServiceChecker"
+    ></app-side-main-nav>
+  </div>
+  <div class="col-9 padding-adjustment">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="row heading">Service Code</div>
+      <div class="row page-margin mt-5">
+        <div class="col-sm-8">
+          <form
+            [formGroup]="serviceCodeForm"
+            class="form-design mt-3 mb-3"
+            @fadeSlideInOut
+          >
+            <mat-card class="example-card">
+              <mat-card-title>
+                <div class="table-header" style="background: #ffff">
+                  <mat-icon class="material-icons-outlined mat-icon-specs"
+                    >visibility</mat-icon
+                  >
+
+                  <span class="sub-heading set-sub-heading-place">
+                    {{ heading }}
+                  </span>
+                </div>
+              </mat-card-title>
+
+              <mat-card-content class="form-design mt-3 mb-3">
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Service Code</mat-label>
+                    <input
+                      (change)="checkSubService()"
+                      maxlength="10"
+                      matInput
+                      type="text"
+                      formControlName="short_code"
+                    />
+                    <mat-icon *ngIf="short_code.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="short_code.hasError('required')">
+                      Service Code is required
+                    </mat-error>
+                    <mat-error *ngIf="short_code.hasError('pattern')">
+                      {{ patternText }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-column">
+                  <p>
+                    <mat-checkbox
+                      formControlName="is_chargable"
+                      style="margin-right: 20px"
+                      (click)="chargeable(!serviceCodeForm.value.is_chargable)"
+                      >Chargeable</mat-checkbox
+                    >
+                    <mat-checkbox
+                      formControlName="has_menu"
+                      style="margin-right: 20px"
+                      (click)="onCheckBox(!serviceCodeForm.value.has_menu)"
+                      >Has Menu</mat-checkbox
+                    >
+                    <mat-checkbox
+                      style="margin-right: 20px"
+                      formControlName="optional_sms"
+                      (change)="update_sms()"
+                    >
+                      Optional SMS</mat-checkbox
+                    >
+                    <mat-checkbox
+                      style="margin-right: 20px"
+                      formControlName="is_bank_short_code"
+                      (click)="
+                        banking(
+                          !serviceCodeForm.getRawValue().is_bank_short_code
+                        )
+                      "
+                      >Banking Service</mat-checkbox
+                    >
+                    <mat-checkbox
+                      style="margin-right: 20px"
+                      formControlName="is_sponsored_charging"
+                      (change)="update_sponsored()"
+                      >Sponsored</mat-checkbox
+                    >
+
+                    <mat-checkbox
+                      style="margin-right: 20px"
+                      formControlName="is_sensitive"
+                      >Sensitive</mat-checkbox
+                    >
+                  </p>
+                </div>
+
+                <div class="form-column" *ngIf="showProtocolDropDown">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Protocol</mat-label>
+                    <mat-select
+                      (selectionChange)="updateField($event.value)"
+                      [formControl]="esme_protocol"
+                      required
+                      placeholder="Select"
+                    >
+                      <mat-option>Select</mat-option>
+                      <mat-option
+                        *ngFor="let protocolName of protocolNames"
+                        [value]="protocolName.id"
+                      >
+                        {{ protocolName.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="esme_protocol.hasError('required')"
+                      >Please choose a Protocol</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+
+                <div class="form-column" *ngIf="showEsmeDropdown">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Esme Configuration</mat-label>
+                    <input
+                      type="text"
+                      placeholder="Pick one"
+                      aria-label="Number"
+                      [formControl]="action_id"
+                      matInput
+                      [matAutocomplete]="auto"
+                    />
+                    <mat-autocomplete
+                      autoActiveFirstOption
+                      #auto="matAutocomplete"
+                    >
+                      <mat-option
+                        *ngFor="let name of esmes"
+                        [value]="name.esme_name"
+                      >
+                        {{ name.esme_name }}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="action_id.hasError('required')"
+                      >Please choose a type</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+
+                <div
+                  class="form-column"
+                  *ngIf="serviceCodeForm.value.is_chargable == true"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Chargeable Type</mat-label>
+                    <mat-select
+                      [formControl]="charge_type"
+                      required
+                      placeholder="Select"
+                    >
+                      <mat-option>Select</mat-option>
+                      <mat-option
+                        *ngFor="let name of chargable_types"
+                        [value]="name.value"
+                      >
+                        {{ name.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="charge_type.hasError('required')"
+                      >Please choose a type</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+
+                <div
+                  class="form-column"
+                  *ngIf="serviceCodeForm.value.is_chargable == true"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Interval(s)</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      min="1"
+                      max="3"
+                      formControlName="intervals"
+                      (change)="changeIntervals()"
+                    />
+                    <mat-icon *ngIf="intervals.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="intervals.hasError('required')">
+                      Interval is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <ngx-slider
+                  [(value)]="minValue"
+                  [(highValue)]="maxValue"
+                  [options]="options"
+                  #slider
+                ></ngx-slider>
+
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Previous Option</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      (keydown)="_keydown($event)"
+                      formControlName="previous_option"
+                    />
+                    <mat-icon *ngIf="previous_option.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="previous_option.hasError('required')">
+                      Option is required
+                    </mat-error>
+                    <mat-error *ngIf="previous_option.hasError('pattern')">
+                      invalid value
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div
+                  class="form-column"
+                  *ngIf="serviceCodeForm.value.is_chargable == true"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Amount</mat-label>
+                    <input matInput type="number" formControlName="amount" />
+                    <mat-icon *ngIf="amount.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="amount.hasError('required')">
+                      Amount is required
+                    </mat-error>
+                    <mat-error *ngIf="amount.hasError('pattern')">
+                      only greater then 0 is allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <input
+                      maxlength="50"
+                      matInput
+                      type="text"
+                      formControlName="title"
+                    />
+                    <mat-icon *ngIf="title.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="title.hasError('required')">
+                      Title is required
+                    </mat-error>
+                    <mat-error *ngIf="title.hasError('noAllSpaces')">
+                      All spaces are not allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <textarea
+                      rows="2"
+                      class="textarea"
+                      matInput
+                      formControlName="description"
+                    ></textarea>
+                    <mat-icon *ngIf="description.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="description.hasError('required')">
+                      Description is required
+                    </mat-error>
+                    <mat-error *ngIf="description.hasError('noAllSpaces')">
+                      All spaces are not allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Timeout in seconds</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      (keydown)="_keydown($event)"
+                      (keydown)="_keydown($event)"
+                      formControlName="session_timeout"
+                      placeholder="Timeout in seconds"
+                    />
+                    <mat-icon *ngIf="session_timeout.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="session_timeout.hasError('required')">
+                      timeout is required
+                    </mat-error>
+                    <mat-error *ngIf="session_timeout.hasError('pattern')">
+                      invalid timeout value
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Consent Menu</mat-label>
+                    <textarea
+                      rows="2"
+                      class="textarea"
+                      matInput
+                      maxlength="300"
+                      formControlName="consent_menu"
+                    ></textarea>
+
+                    <mat-error *ngIf="consent_menu.hasError('required')">
+                      Consent Menu is required
+                    </mat-error>
+                    <span
+                      style="color: #59caea"
+                      matSuffix
+                      *ngIf="serviceCodeForm.value.consent_menu"
+                    >
+                      {{ serviceCodeForm.value.consent_menu.length }}/300
+                    </span>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Consent Lifetime In days</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      (keydown)="_keydown($event)"
+                      placeholder="Consent Lifetime In days"
+                      formControlName="consent_lifetime"
+                    />
+                    <mat-icon *ngIf="consent_lifetime.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="consent_lifetime.hasError('min')">
+                      Consent Lifetime must be greater than or equal to 0
+                    </mat-error>
+                    <mat-error *ngIf="consent_lifetime.hasError('required')">
+                      Consent Lifetime is required
+                    </mat-error>
+                    <mat-error *ngIf="consent_lifetime.hasError('pattern')">
+                      invalid Consent Lifetime value
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Bank ID</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      (keydown)="_keydown($event)"
+                      formControlName="bank_id"
+                    />
+                    <mat-icon *ngIf="bank_id.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="bank_id.hasError('required')">
+                      Bank ID is required
+                    </mat-error>
+                    <mat-error *ngIf="bank_id.hasError('pattern')">
+                      invalid Bank ID
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Bank Api URL</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="bank_api_url"
+                    />
+                    <mat-icon *ngIf="bank_api_url.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="bank_api_url.hasError('required')">
+                      Bank Api URL is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_sponsored_charging == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>MSISDN</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      (keydown)="_keydown($event)"
+                      formControlName="esme_charging_msisdn"
+                    />
+                    <mat-icon *ngIf="esme_charging_msisdn.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error
+                      *ngIf="esme_charging_msisdn.hasError('required')"
+                    >
+                      MSISDN is required
+                    </mat-error>
+                    <mat-error *ngIf="esme_charging_msisdn.hasError('pattern')">
+                      invalid MSISDN Please enter a valid MSISDN
+                    </mat-error>
+                    <mat-error
+                      *ngIf="esme_charging_msisdn.hasError('minlength')"
+                    >
+                      MSISDN is required
+                    </mat-error>
+                    <mat-error
+                      *ngIf="esme_charging_msisdn.hasError('maxlength')"
+                    >
+                      MSISDN is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Authentication Api URL</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      formControlName="authentication_api_url"
+                    />
+                    <mat-icon *ngIf="authentication_api_url.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error
+                      *ngIf="authentication_api_url.hasError('required')"
+                    >
+                      Authentication Api URL is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="serviceCodeForm.value.optional_sms"
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>SMS Text</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      required
+                      formControlName="sms_text"
+                    />
+                    <mat-icon *ngIf="sms_text.valid" matSuffix>done</mat-icon>
+                    <mat-error *ngIf="sms_text.hasError('required')">
+                      ESME MO Keyword is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Bank User Name</mat-label>
+                    <input
+                      maxlength="50"
+                      autocomplete="new-password"
+                      matInput
+                      type="text"
+                      formControlName="bank_user_name"
+                    />
+                    <mat-icon *ngIf="bank_user_name.valid" matSuffix
+                      >done</mat-icon
+                    >
+                    <mat-error *ngIf="bank_user_name.hasError('required')">
+                      Bank User Name is required
+                    </mat-error>
+                    <!-- <mat-error *ngIf="bank_user_name.hasError('pattern')">
+                    only (_ .) is allowed
+                  </mat-error> -->
+                  </mat-form-field>
+                </div>
+
+                <div
+                  class="form-column"
+                  *ngIf="
+                    serviceCodeForm.getRawValue().is_bank_short_code == true
+                  "
+                >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Bank Password</mat-label>
+                    <input
+                      autocomplete="doNotAutoComplete"
+                      matInput
+                      [type]="hide ? 'password' : 'text'"
+                      formControlName="bank_password"
+                    />
+                    <a
+                      mat-icon-button
+                      matSuffix
+                      *ngIf="bank_password.valid"
+                      (click)="hide = !hide"
+                      [attr.aria-label]="'Hide password'"
+                      [attr.aria-pressed]="hide"
+                    >
+                      <mat-icon>{{
+                        hide ? "visibility_off" : "visibility"
+                      }}</mat-icon>
+                    </a>
+                    <mat-error *ngIf="bank_password.hasError('required')">
+                      Bank Password is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </mat-card-content>
+
+              <div class="action-buttons">
+                <mat-divider inset class="mb-4"></mat-divider>
+
+                <!-- <button mat-raised-button class="cancel-button" routerLink="/service-code-list-view">
+                Cancel
+              </button> -->
+
+                <button
+                  mat-raised-button
+                  class="cancel-button"
+                  (click)="clearForm()"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  *ngIf="historyData !== 'editService'"
+                  [disabled]="!serviceCodeForm.valid"
+                  mat-raised-button
+                  class="submit-button"
+                  (click)="onSubmit()"
+                >
+                  {{ buttonText }}
+                </button>
+                <button
+                  [disabled]="!serviceCodeForm.valid"
+                  *ngIf="historyData == 'editService'"
+                  mat-raised-button
+                  class="submit-button"
+                  (click)="editService()"
+                >
+                  Edit Service
+                </button>
+              </div>
+            </mat-card>
+          </form>
+          <br />
+          <br />
+        </div>
+
+        <div
+          class="col-sm-4"
+          style="margin-top: 182px"
+          *ngIf="serviceCodeForm.value.is_chargable == true"
+        >
+          <div class="page-wrapper overflow-hidden">
+            <mat-card class="example-card">
+              <mat-card-title> Intervals </mat-card-title>
+              <mat-card-content>
+                <ul>
+                  <li *ngFor="let n of numSequence(setInterval); let i = index">
+                    <div class="d-flex flex-row justify-content-between mt-5">
+                      <a>Enter Interval {{ i + 1 }}</a>
+                      <button
+                        class="submit-button mt-n2"
+                        mat-raised-button
+                        (click)="setIntervalRanges(i + 1)"
+                      >
+                        Set Interval
+                      </button>
+                    </div>
+                  </li>
+                </ul>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

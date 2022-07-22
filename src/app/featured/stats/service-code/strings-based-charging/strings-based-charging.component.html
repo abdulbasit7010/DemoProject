@@ -1,0 +1,127 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+  <div class="col-9">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+    <div class="page-wrapper">
+      <div class="row heading">Services</div>
+      <div class="row d-flex justify-content-center align-items-center mt-5">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <form [formGroup]="stringForm" autocomplete="off">
+            <mat-card class="example-card">
+              <mat-card-title>
+                <div class="table-header" style="background: #ffff">
+                  <mat-icon class="material-icons-outlined mat-icon-specs"
+                    >visibility</mat-icon
+                  >
+
+                  <span class="sub-heading set-sub-heading-place">
+                    {{ heading }}
+                  </span>
+                </div>
+              </mat-card-title>
+
+              <mat-card-content class="form-design mt-3 mb-3">
+                <div class="form-column">
+                  <mat-checkbox formControlName="chargeable">
+                    Charging
+                  </mat-checkbox>
+                </div>
+
+                <div class="form-column">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Service Code</mat-label>
+                    <mat-select
+                      [disabled]="edit"
+                      [formControl]="short_code"
+                      required
+                      placeholder="Select"
+                    >
+                      <mat-option>Select</mat-option>
+                      <mat-option
+                        *ngFor="let value of serviceCodes"
+                        [value]="value"
+                      >
+                        {{ value }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="short_code.hasError('required')"
+                      >Please choose a Service Code</mat-error
+                    >
+                  </mat-form-field>
+                </div>
+
+                <form
+                  [formGroup]="addressForm"
+                  style="border: 1px solid rgb(226, 226, 226); width: 100%"
+                >
+                  <div
+                    class="p-2 mb-2 d-flex justify-content-between"
+                    style="background-color: rgb(225, 223, 223)"
+                  >
+                    <div>Add Multiple Parameters</div>
+
+                    <div class="d-flex align-items-end">
+                      <button [disabled]="numOfFiles == 1" class="increment">
+                        <mat-icon (click)="increment(numOfFiles, 2)"
+                          >remove_circle</mat-icon
+                        >
+                      </button>
+
+                      {{ numOfFiles }}
+
+                      <button [disabled]="numOfFiles == 9" class="increment">
+                        <mat-icon (click)="increment(numOfFiles, 1)"
+                          >add_circle</mat-icon
+                        >
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    formArrayName="addresses"
+                    *ngFor="let address of addressControls; let i = index"
+                    class="pt-1 pr-4 pl-4"
+                  >
+                    <div [formGroupName]="i" class="d-flex flex-column">
+                      <div class="form-column">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Add Value</mat-label>
+                          <input
+                            matInput
+                            type="text"
+                            formControlName="addValue"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </mat-card-content>
+              <mat-card-actions>
+                <div class="action-buttons">
+                  <mat-divider inset class="mb-4"></mat-divider>
+
+                  <button
+                    mat-raised-button
+                    (click)="onSubmit()"
+                    [disabled]="!stringForm.valid"
+                    class="submit-button"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </mat-card-actions>
+            </mat-card>
+          </form>
+        </div>
+
+        <div class="col-sm-3"></div>
+      </div>
+    </div>
+  </div>
+</div>

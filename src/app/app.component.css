@@ -1,0 +1,51 @@
+.container-fluid {
+  padding-right: 0;
+  padding-left: 0;
+  height: 100vh;
+  background-color: #f7f7f7;
+  overflow: hidden;
+  font-family: "Poppins" !important;
+}
+::ng-deep.mat-drawer-inner-container {
+  width: 108% !important;
+}
+ ::ng-deep.mat-form-field {
+ width: 100%; 
+  /* height: 83px !important; */
+} 
+
+::ng-deep.mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 6px 0px 13px 0px !important;
+}
+
+::ng-deep.mat-input-element {
+  font-family: "Poppins" !important;
+}
+
+::ng-deep.mat-card {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px !important;
+}
+::ng-deep.mat-table {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px !important;
+}
+
+::ng-deep.mat-card-action {
+  margin: 0px !important;
+}
+
+::ng-deep.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #59caea !important;
+}
+
+::ng-deep.mat-radio-button.mat-accent.mat-radio-checked
+  .mat-radio-outer-circle {
+  border-color: #59caea !important;
+}
+
+::ng-deep.mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #59caea !important;
+}
+
+

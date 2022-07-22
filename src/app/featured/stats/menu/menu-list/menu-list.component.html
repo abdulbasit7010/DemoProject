@@ -1,0 +1,243 @@
+<app-loader></app-loader>
+<div class="row mainContainer">
+  <div class="col-3 sideNavContainer">
+    <app-side-main-nav></app-side-main-nav>
+  </div>
+  <div class="col-9 padding-adjustment">
+    <div class="row navbar-height">
+      <app-navbar style="width: 100%; height: 100%"></app-navbar>
+    </div>
+
+    <div class="page-wrapper">
+      <h1>{{ treeName }}</h1>
+      <hr />
+
+      <div class="row d-flex">
+        <button
+          type="button"
+          mat-raised-button
+          class="ml-4 submit-button"
+          (click)="child.openDialog()"
+        >
+          Add Menu
+        </button>
+        <button
+          type="button"
+          mat-raised-button
+          class="ml-4 submit-button"
+          (click)="saveChanges()"
+        >
+          Save Changes
+        </button>
+      </div>
+      <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-step>
+          <ng-template matStepLabel>Menu Tree View</ng-template>
+          <div
+            class="d3-chart mat-elevation-z8 tree"
+            #chart
+            style="width: auto"
+          ></div>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Menu Tabular View</ng-template>
+          <mat-tree
+            [dataSource]="dataSource"
+            [treeControl]="treeControl"
+            #tree
+            class="example-tree"
+          >
+            <!-- This is the tree node template for leaf nodes -->
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+              <li class="mat-tree-node node-div-border">
+                <button mat-icon-button disabled></button>
+                <span
+                  class="add_child"
+                  (click)="child.addChild(node.menu_item_text)"
+                  text="Click to add menu here"
+                  >{{ node.menu_item_text }}</span
+                >
+              </li>
+            </mat-tree-node>
+            <!-- This is the tree node template for expandable nodes -->
+            <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+              <li style="list-style-type: none">
+                <div class="mat-tree-node node-div-border flex-space-between">
+                  <div>
+                    <button
+                      mat-icon-button
+                      matTreeNodeToggle
+                      [attr.aria-label]="'Toggle ' + node.menu_item_text"
+                    >
+                      <mat-icon class="mat-icon-rtl-mirror">
+                        {{
+                          treeControl.isExpanded(node)
+                            ? "expand_more"
+                            : "chevron_right"
+                        }}
+                      </mat-icon>
+                    </button>
+                    <span
+                      (click)="openCurrentNode(node)"
+                      style="font-size: large"
+                      ><b>{{ node.short_code_dtmf }}: </b
+                      >{{ node.menu_item_text.substring(0, 15) }}
+                    </span>
+                  </div>
+
+                  <!-- <div>
+                  <mat-icon *ngIf="node.has_menu" class="mt-1 add_child" style="color: #272f52"
+                    (click)="child.addChild(node)">
+                    add_box</mat-icon>
+                  <mat-icon class="mt-1 add_child" style="color: #ff4f4f" (click)="child.opendltMenuDialog(node)">
+                    delete
+                  </mat-icon>
+                  <mat-icon class="mt-1 add_child" style="color: #ffc200" (click)="child.updateMenu(node)">edit
+                  </mat-icon>
+                </div> -->
+                </div>
+                <ul
+                  [class.example-tree-invisible]="!treeControl.isExpanded(node)"
+                >
+                  <ng-container matTreeNodeOutlet></ng-container>
+                </ul>
+              </li>
+            </mat-nested-tree-node>
+          </mat-tree>
+        </mat-step>
+      </mat-horizontal-stepper>
+      <!-- <div class="row justify-content-center align-items-center">
+      <div class="mt-4" style="width: 100%; height: 100vh">
+        <div class="d3-chart mat-elevation-z8 tree" #chart></div> -->
+      <!-- <ng-template #Item let-item>
+          <ng-container *ngIf="!item.press_options.length; else Component">
+            <p
+              class="cursor"
+              [matMenuTriggerFor]="menu"
+              (click)="openCurrentNode(item)"
+            >
+              {{ item.menu_item_text || item.wl_menu_item_text }}
+            </p>
+          </ng-container>
+          <ng-template #Component>
+            <div class="hv-item">
+              <div class="hv-item-parent">
+                <p
+                  class="cursor"
+                  [matMenuTriggerFor]="menu"
+                  (click)="openCurrentNode(item)"
+                >
+                  {{ item.menu_item_text || item.wl_menu_item_text }}
+                </p>
+              </div>
+              <div class="hv-item-children">
+                <div
+                  class="hv-item-child"
+                  *ngFor="let child of item.press_options"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="Item; context: { $implicit: child }"
+                  ></ng-container>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ng-template>
+        <ng-container *ngFor="let child of response | converter">
+          <ng-container
+            *ngTemplateOutlet="Item; context: { $implicit: child }"
+          ></ng-container>
+        </ng-container> -->
+      <!-- </div>
+    </div>
+  </div> -->
+      <mat-menu #menu="matMenu"> </mat-menu>
+      <app-menu-add #child (outputJson)="getChildValue($event)"></app-menu-add>
+    </div>
+
+    <div
+      class="modal"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+      [ngStyle]="{ display: this.showModal }"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">
+              Select Option
+            </h5>
+
+            <mat-icon
+              data-dismiss="modal"
+              aria-label="Close"
+              (click)="closeModal()"
+            >
+              cancel
+            </mat-icon>
+          </div>
+          <div class="modal-body">
+            <div class="row d-flex justify-content-around">
+              <button
+                *ngIf="mainObj.has_menu"
+                mat-raised-button
+                (click)="addNewNode()"
+                class="submit-button"
+              >
+                Add New Child
+              </button>
+              <button
+                mat-raised-button
+                (click)="updateNode()"
+                class="cancel-button"
+              >
+                Edit Node
+              </button>
+              <button
+                mat-raised-button
+                (click)="deleteCurrentNode()"
+                style="border: 1px solid red; border-radius: 30px"
+              >
+                Delete Node
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal"
+      id="nodeText"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+      [ngStyle]="{ display: this.showTextModal }"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Node Text</h5>
+            <mat-icon
+              data-dismiss="modal"
+              aria-label="Close"
+              (click)="closeModal()"
+            >
+              cancel
+            </mat-icon>
+          </div>
+          <div class="modal-body">
+            <div class="row d-flex justify-content-around">
+              <p class="node-text">{{ nodeText }}</p>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
